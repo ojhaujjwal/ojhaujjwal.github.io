@@ -163,8 +163,8 @@ $request = $baseRequest->withUri($uri)
             <h3>PSR-7 Implementations</h3>
             <ul>
                 <li>zendframework/zend-diactoros</li>
-                <li class="fragment">guzzlehttp/psr7(missing ServerRequestInterface and UploadedFileInterface)</li>
-                <li class="fragment">wandu/http</li>
+                <li class="fragment">guzzlehttp/psr7
+                <li class="fragment">slim/slim</li>
             </ul>
             <p class="fragment">Implementations list available on <a target="_black" href="http://bit.ly/1OHQJHd">http://bit.ly/1OHQJHd</a></p>
         </section>
@@ -185,7 +185,7 @@ $request = $baseRequest->withUri($uri)
             </ul>
         </section>
         <section>
-            <h3>Middleware signature</h3>
+            <h3>Middleware signature(Double Pass)</h3>
             <pre>
                 <code>
 function (
@@ -197,6 +197,31 @@ function (
 }
                 </code>
             </pre>
+        </section>
+        <section>
+            <h3>Middleware signature(Single Pass)</h3>
+            <pre>
+                <code>
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\ServerMiddleware\DelegateInterface;
+use Psr\Http\ServerMiddleware\MiddlewareInterface;
+
+class MyMiddleware implements MiddlewareInterface
+{
+    public function process(
+        ServerRequestInterface $request,
+        DelegateInterface $delegate
+    ) {
+       return new Response();
+
+       // or call the next middleware in the queue
+       return $delegate->process($request);
+
+    }
+}
+                </code>
+            </pre>
+            <p>proposed PSR-15 standard as of now</p>
         </section>
         <section>
             <h3>Sample application as queue of middlewares</h3>
@@ -260,7 +285,7 @@ $app->pipe('/foo', function ($req, $res, $next) {
             <ul>
                 <li>A minimalistic PSR-7 middleware framework</li>
                 <li class="fragment">Built on the top of Stratigility</li>
-                <li class="fragment">Latest release: 1.0.0rc5</li>
+                <li class="fragment">Latest release: 2.0.x</li>
                 <li class="fragment">
                     Composer package:
                     <a target="_black" href="https://packagist.org/packages/zendframework/zend-expressive">
@@ -303,8 +328,8 @@ $app->pipe('/foo', function ($req, $res, $next) {
 
                     Use PSR-7
                 </li>
-                <li class="fragment">Forget zf2 modules, symfony bundles. Use middlewares</li>
-                <li class="fragment">You can use Expressive to easily build PSR-7 based middleware applications.</li>
+                <li class="fragment">No more zf modules, symfony bundles. Use middlewares</li>
+                <li class="fragment">You can use Expressive to easily build PSR-15 based middleware applications.</li>
             </ul>
         </section>
         <section>
